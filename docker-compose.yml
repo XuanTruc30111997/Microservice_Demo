@@ -1,0 +1,132 @@
+version: '3.3'
+
+networks:
+  truc:
+
+services:
+  #service1: definition of mySQl database
+  theater_db:
+    image: mysql:latest
+    container_name: theater-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=TrucNguyen123
+      - MYSQL_USER=root
+    ports:
+    - "3306:3306"
+    restart: always
+    networks:
+      - truc
+
+  #service2: definition of phpmyadmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: my-php-myadmin
+    ports:
+      - "8082:80"
+    restart: always
+
+    depends_on:
+      - theater_db
+    networks:
+      - truc
+
+    environment:
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: TrucNguyen123
+
+    volumes:
+      - ./mysql-data:/var/lib/mysql57:rw
+      - ./mysql-init:/docker-entrypoint-initdb.d/:ro
+
+#  #service2: definition of mySQl database for movie
+#  movie_db:
+#    image: mysql:latest
+#    container_name: movie-db
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=TrucNguyen123
+#      - MYSQL_USER=root
+#    ports:
+#      - "3306:3307"
+#    restart: always
+#    networks:
+#      - truc
+#
+#  #service3: definition of mySQl database for catalog
+#  catalog_db:
+#    image: mysql:latest
+#    container_name: catalog-db
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=TrucNguyen123
+#      - MYSQL_USER=root
+#    ports:
+#      - "3306:3308"
+#    restart: always
+#    networks:
+#      - truc
+
+  #service4: definition of rating-service
+  rating_service:
+    image: rating-service
+    container_name: rating-service
+    build:
+      context: ./rating_service
+      dockerfile: DockerFile
+    ports:
+    - "8086:8086"
+    restart: always
+
+    depends_on:
+      - theater_db
+    networks:
+      - truc
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://theater-db:3306/rating?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: TrucNguyen123
+
+  #service5: definition of movie-service
+  movie_service:
+    image: movie-service
+    container_name: movie-service
+    build:
+      context: ./movie_service
+      dockerfile: DockerFile
+    ports:
+      - "8087:8087"
+    restart: always
+
+    depends_on:
+      - theater_db
+
+    links:
+      - rating_service:rating_service
+
+    networks:
+      - truc
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://theater-db:3306/movie?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: TrucNguyen123
+
+  #service6: definition of catalog-service
+  catalog_service:
+    image: catalog-service
+    container_name: catalog-service
+    build:
+      context: ./catalog_service
+      dockerfile: DockerFile
+    ports:
+      - "8088:8088"
+    restart: always
+
+    depends_on:
+      - theater_db
+    networks:
+      - truc
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://theater-db:3306/catalog?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: TrucNguyen123
