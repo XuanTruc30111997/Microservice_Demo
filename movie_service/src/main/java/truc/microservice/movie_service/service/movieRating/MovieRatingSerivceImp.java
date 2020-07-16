@@ -23,7 +23,8 @@ public class MovieRatingSerivceImp implements MovieRatingService {
         Movie movie = movieService.findById(id);
 
         // get Rating
-        Rating rating = restTemplate.getForObject("http://localhost:8086/api/rating/byMovieId/1", Rating.class);
+//        Rating rating = restTemplate.getForObject("http://localhost:8086/api/rating/byMovieId/1", Rating.class);
+        Rating rating = restTemplate.getForObject("http://rating-service/api/rating/byMovieId/1", Rating.class);
 
         // Map to MovieRating
         return new MovieRating(movie.getId(), movie.getName(), rating.getStar());

@@ -38,33 +38,33 @@ services:
       - ./mysql-data:/var/lib/mysql57:rw
       - ./mysql-init:/docker-entrypoint-initdb.d/:ro
 
-#  #service2: definition of mySQl database for movie
-#  movie_db:
-#    image: mysql:latest
-#    container_name: movie-db
-#    environment:
-#      - MYSQL_ROOT_PASSWORD=TrucNguyen123
-#      - MYSQL_USER=root
-#    ports:
-#      - "3306:3307"
-#    restart: always
-#    networks:
-#      - truc
-#
-#  #service3: definition of mySQl database for catalog
-#  catalog_db:
-#    image: mysql:latest
-#    container_name: catalog-db
-#    environment:
-#      - MYSQL_ROOT_PASSWORD=TrucNguyen123
-#      - MYSQL_USER=root
-#    ports:
-#      - "3306:3308"
-#    restart: always
-#    networks:
-#      - truc
+  #service3: definition of discovery server
+  discovery:
+    image: discovery
+    build:
+      context: ./discovery
+      dockerfile: DockerFile
+    ports:
+      - 8761:8761
 
-  #service4: definition of rating-service
+  #service4: definition of config
+  config:
+    image: config
+    build:
+      context: ./config
+      dockerfile: DockerFile
+    volumes:
+      - ./config-data:/var/config-data
+    environment:
+      - JAVA_OPTS=
+        -DEUREKA_SERVER=http://discovery:8761/eureka
+        -Dspring.cloud.config.server.native.searchLocations=/var/config-data
+    depends_on:
+      - discovery
+    ports:
+      - 8888:8888
+
+  #service5: definition of rating-service
   rating_service:
     image: rating-service
     container_name: rating-service
@@ -77,6 +77,8 @@ services:
 
     depends_on:
       - theater_db
+      - discovery
+      - config
     networks:
       - truc
 
@@ -85,7 +87,7 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: TrucNguyen123
 
-  #service5: definition of movie-service
+  #service6: definition of movie-service
   movie_service:
     image: movie-service
     container_name: movie-service
@@ -98,6 +100,8 @@ services:
 
     depends_on:
       - theater_db
+      - discovery
+      - config
 
     links:
       - rating_service:rating_service
@@ -110,7 +114,7 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: TrucNguyen123
 
-  #service6: definition of catalog-service
+  #service7: definition of catalog-service
   catalog_service:
     image: catalog-service
     container_name: catalog-service
@@ -123,6 +127,9 @@ services:
 
     depends_on:
       - theater_db
+      - discovery
+      - config
+
     networks:
       - truc
 
