@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/MicroserviceDemo.iml" filepath="$PROJECT_DIR$/.idea/MicroserviceDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/catalog_service/catalog_service.iml" filepath="$PROJECT_DIR$/catalog_service/catalog_service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/config/config.iml" filepath="$PROJECT_DIR$/config/config.iml" />
+      <module fileurl="file://$PROJECT_DIR$/discovery/discovery.iml" filepath="$PROJECT_DIR$/discovery/discovery.iml" />
       <module fileurl="file://$PROJECT_DIR$/movie_service/movie_service.iml" filepath="$PROJECT_DIR$/movie_service/movie_service.iml" />
       <module fileurl="file://$PROJECT_DIR$/rating_service/rating_service.iml" filepath="$PROJECT_DIR$/rating_service/rating_service.iml" />
     </modules>

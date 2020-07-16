@@ -30,7 +30,8 @@ public class CatalogMovieDetailServiceImp implements CatalogMovieDetailSerivce {
         // set MovieRatings
         for(var catalogDetail : catalog.getCatalogDetails())
         {
-            MovieRating movieRating = restTemplate.getForObject("http://movie_serivce:8087/api/movie_rating/" + catalogDetail.getMovieId(), MovieRating.class);
+//            MovieRating movieRating = restTemplate.getForObject("http://movie_serivce:8087/api/movie_rating/" + catalogDetail.getMovieId(), MovieRating.class);
+            MovieRating movieRating = restTemplate.getForObject("http://movie-serivce/api/movie_rating/" + catalogDetail.getMovieId(), MovieRating.class);
             movieRatings.add(movieRating);
         }
 

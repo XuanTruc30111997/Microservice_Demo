@@ -6,13 +6,17 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="catalog_service" />
+        <module name="discovery" />
+        <module name="config" />
         <module name="movie_service" />
+        <module name="catalog_service" />
         <module name="rating_service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="catalog_service" target="11" />
+      <module name="config" target="11" />
+      <module name="discovery" target="11" />
       <module name="movie_service" target="11" />
       <module name="rating_service" target="11" />
     </bytecodeTargetLevel>
@@ -20,6 +24,8 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="catalog_service" options="-parameters" />
+      <module name="config" options="-parameters" />
+      <module name="discovery" options="-parameters" />
       <module name="movie_service" options="-parameters" />
       <module name="rating_service" options="-parameters" />
     </option>
