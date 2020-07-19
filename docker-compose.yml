@@ -34,13 +34,10 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: TrucNguyen123
 
-    volumes:
-      - ./mysql-data:/var/lib/mysql57:rw
-      - ./mysql-init:/docker-entrypoint-initdb.d/:ro
-
   #service3: definition of discovery server
   discovery:
     image: discovery
+    container_name: theater-discovery
     build:
       context: ./discovery
       dockerfile: DockerFile
@@ -50,14 +47,13 @@ services:
   #service4: definition of config
   config:
     image: config
+    container_name: theater-config
     build:
       context: ./config
       dockerfile: DockerFile
-    volumes:
-      - ./config-data:/var/config-data
     environment:
       - JAVA_OPTS=
-        -DEUREKA_SERVER=http://discovery:8761/eureka
+        -DEUREKA_SERVER=http://theater-discovery:8761/eureka
         -Dspring.cloud.config.server.native.searchLocations=/var/config-data
     depends_on:
       - discovery
@@ -82,10 +78,17 @@ services:
     networks:
       - truc
 
+    links:
+      - discovery
+
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://theater-db:3306/rating?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: TrucNguyen123
+      eureka.client.enabled: 'true'
+      eureka.host: discovery
+      eureka.instance.preferIpAddress: 'true'
+      SPRING_PROFILES_ACTIVE: docker
 
   #service6: definition of movie-service
   movie_service:
@@ -105,6 +108,7 @@ services:
 
     links:
       - rating_service:rating_service
+      - discovery
 
     networks:
       - truc
@@ -113,6 +117,10 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://theater-db:3306/movie?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: TrucNguyen123
+      eureka.client.enabled: 'true'
+      eureka.host: discovery
+      eureka.instance.preferIpAddress: 'true'
+      SPRING_PROFILES_ACTIVE: docker
 
   #service7: definition of catalog-service
   catalog_service:
@@ -133,7 +141,14 @@ services:
     networks:
       - truc
 
+    links:
+      - discovery
+
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://theater-db:3306/catalog?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: TrucNguyen123
+      eureka.client.enabled: 'true'
+      eureka.host: discovery
+      eureka.instance.preferIpAddress: 'true'
+      SPRING_PROFILES_ACTIVE: docker
