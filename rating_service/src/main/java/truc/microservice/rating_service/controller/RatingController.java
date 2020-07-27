@@ -6,9 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import truc.microservice.rating_service.exception.ResourceNotFoundException;
 import truc.microservice.rating_service.model.Rating;
+import truc.microservice.rating_service.model.RatingCount;
 import truc.microservice.rating_service.model.RatingInsert;
+import truc.microservice.rating_service.model.RatingList;
+import truc.microservice.rating_service.service.RatingCountService;
 import truc.microservice.rating_service.service.RatingService;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -17,16 +21,25 @@ public class RatingController {
     @Autowired
     RatingService ratingService;
 
+    @Autowired
+    RatingCountService ratingCountService;
+
     @GetMapping("/{id}")
     public ResponseEntity<Rating> getRatingById(@PathVariable("id") Integer id)
     {
         return new ResponseEntity<>(ratingService.getRatingById(id), HttpStatus.OK);
     }
 
-    @GetMapping("/byMovieId/{movieId}")
-    public ResponseEntity<Rating> getRatingByMovieId(@PathVariable("movieId") Integer movieId)
+    @GetMapping("/ratingsByMovieId/{movieId}")
+    public ResponseEntity<RatingList> getRatingsByMovieId(@PathVariable("movieId") Integer movieId)
     {
-        return new ResponseEntity<>(ratingService.findRatingByMovieId(movieId), HttpStatus.OK);
+        return new ResponseEntity<>(ratingService.findRatingsByMovieId(movieId), HttpStatus.OK);
+    }
+
+    @GetMapping("/avgStarByMovieId/{movieId}")
+    public ResponseEntity<RatingCount> getAvgStarByMovieId(@PathVariable("movieId") Integer movieId)
+    {
+        return new ResponseEntity<>(ratingCountService.caculateAvgStar(movieId), HttpStatus.OK);
     }
 
     @PostMapping("")
