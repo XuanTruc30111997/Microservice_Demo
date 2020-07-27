@@ -12,9 +12,16 @@ public class Movie {
     @GeneratedValue
     private Integer id;
     private String name;
+    private Byte avgStar;
 
     public Movie() {
 
+    }
+
+    public Movie(Integer id, String name, Byte avgStar) {
+        this.id = id;
+        this.name = name;
+        this.avgStar = avgStar;
     }
 
     public Movie (String name)
@@ -40,5 +47,13 @@ public class Movie {
     public void setName(String name)
     {
         this.name = name;
+    }
+
+    public Byte getAvgStar() {
+        return avgStar;
+    }
+
+    public void setAvgStar(Byte avgStar) {
+        this.avgStar = avgStar;
     }
 }
