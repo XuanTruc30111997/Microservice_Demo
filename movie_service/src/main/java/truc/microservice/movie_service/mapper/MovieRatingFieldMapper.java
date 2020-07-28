@@ -5,7 +5,7 @@ import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.validation.BindException;
 import truc.microservice.movie_service.model.MovieRating;
 
-public class MovieRatingFileMapper implements FieldSetMapper<MovieRating> {
+public class MovieRatingFieldMapper implements FieldSetMapper<MovieRating> {
     @Override
     public MovieRating mapFieldSet(FieldSet fieldSet) throws BindException {
         MovieRating movieRating = new MovieRating();

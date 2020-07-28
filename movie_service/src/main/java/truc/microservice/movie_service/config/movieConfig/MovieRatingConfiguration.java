@@ -1,41 +1,31 @@
 package truc.microservice.movie_service.config.movieConfig;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
-import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
+import org.springframework.batch.item.json.JacksonJsonObjectReader;
+import org.springframework.batch.item.json.JsonItemReader;
+import org.springframework.batch.item.json.builder.JsonItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.client.RestTemplate;
 import truc.microservice.movie_service.batchProcessor.MovieRatingProcessor;
-import truc.microservice.movie_service.batchReader.RESTMovieReader;
 import truc.microservice.movie_service.batchWriter.MovieWriter;
-import truc.microservice.movie_service.batchWriter.RESTMovieWriter;
-import truc.microservice.movie_service.mapper.MovieRatingFileMapper;
+import truc.microservice.movie_service.mapper.MovieRatingFieldMapper;
 import truc.microservice.movie_service.model.Movie;
-import truc.microservice.movie_service.model.MovieInsert;
 import truc.microservice.movie_service.model.MovieRating;
-
-import javax.sql.DataSource;
 
 @Configuration
 public class MovieRatingConfiguration {
@@ -48,6 +38,9 @@ public class MovieRatingConfiguration {
 
     @Autowired
     JobCompletionNotificationListener listener;
+
+    @Autowired
+    RestTemplate restTemplate;
 
     @Bean
     public Job movieJob(Step movieRatingStep1)
@@ -64,7 +57,7 @@ public class MovieRatingConfiguration {
     {
         return stepBuilderFactory.get("movieRatingStep1")
                 .<MovieRating, Movie>chunk(1)
-                .reader(reader())
+                .reader(jsonItemReader())
                 .processor(movieRatingItemProcessor())
                 .writer(movieWriter())
                 .build();
@@ -78,18 +71,36 @@ public class MovieRatingConfiguration {
         return new ClassPathResource("sample-data.csv");
     }
 
-    @Bean
+/*    @Bean
     @StepScope
     public FlatFileItemReader<MovieRating> reader() {
         return new FlatFileItemReaderBuilder<MovieRating>()
                 .name("ratingItemReader")
-                .resource(inputFileResource())
+//                .resource(inputFileResource())
+                .resource(restTemplate.getForObject("http://aws-service/amazonS3/test-ahihi/movie.json", ByteArrayResource.class))
                 .delimited()
                 .names(new String[]{"idMovie", "name", "star"})
 //                .fieldSetMapper(new BeanWrapperFieldSetMapper<MovieRating>() {{
 //                    setTargetType(MovieRating.class);
 //                }})
-                .fieldSetMapper(new MovieRatingFileMapper())
+                .fieldSetMapper(new MovieRatingFieldMapper())
+                .build();
+    }*/
+
+    @Bean
+    @StepScope
+    public JsonItemReader<MovieRating> jsonItemReader()
+    {
+        ObjectMapper objectMapper = new ObjectMapper();
+        // configure the objectMapper as required
+        JacksonJsonObjectReader<MovieRating> jsonObjectReader =
+                new JacksonJsonObjectReader<>(MovieRating.class);
+        jsonObjectReader.setMapper(objectMapper);
+
+        return new JsonItemReaderBuilder<MovieRating>()
+                .jsonObjectReader(jsonObjectReader)
+                .resource(restTemplate.getForObject("http://aws-service/amazonS3/test-ahihi/movie.json", ByteArrayResource.class))
+                .name("tradeJsonItemReader")
                 .build();
     }
 
