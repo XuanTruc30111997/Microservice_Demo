@@ -8,9 +8,10 @@
         <outputRelativeToContentRoot value="true" />
         <module name="discovery" />
         <module name="config" />
-        <module name="movie_service" />
-        <module name="catalog_service" />
         <module name="rating_service" />
+        <module name="catalog_service" />
+        <module name="test-aws" />
+        <module name="movie_service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -19,6 +20,7 @@
       <module name="discovery" target="11" />
       <module name="movie_service" target="11" />
       <module name="rating_service" target="11" />
+      <module name="test-aws" target="11" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -28,6 +30,7 @@
       <module name="discovery" options="-parameters" />
       <module name="movie_service" options="-parameters" />
       <module name="rating_service" options="-parameters" />
+      <module name="test-aws" options="-parameters" />
     </option>
   </component>
 </project>
