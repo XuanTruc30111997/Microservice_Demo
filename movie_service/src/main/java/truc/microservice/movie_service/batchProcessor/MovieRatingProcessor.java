@@ -1,4 +1,4 @@
-package truc.microservice.movie_service.config.movieConfig;
+package truc.microservice.movie_service.batchProcessor;
 
 import org.springframework.batch.item.ItemProcessor;
 import truc.microservice.movie_service.model.MovieRating;

@@ -5,27 +5,30 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.listener.JobExecutionListenerSupport;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
-import truc.microservice.movie_service.model.Movie;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.web.client.RestTemplate;
+import truc.microservice.movie_service.batchProcessor.MovieRatingProcessor;
+import truc.microservice.movie_service.batchReader.RESTMovieReader;
+import truc.microservice.movie_service.batchWriter.RESTMovieWriter;
 import truc.microservice.movie_service.model.MovieRating;
-import truc.microservice.movie_service.model.Rating;
-import truc.microservice.movie_service.service.movie.MovieService;
 
 import javax.sql.DataSource;
 
@@ -46,16 +49,9 @@ public class MovieRatingConfiguration {
     @Bean
     public Job movieJob(Step movieRatingStep1, JobCompletionNotificationListener listener)
     {
-//        return jobBuilderFactory.get("movieJob")
-//                .incrementer(new RunIdIncrementer())
-//                .listener(listener)
-//                .flow(movieRatingStep1)
-//                .end()
-//                .build();
 
         return jobBuilderFactory.get("movieJob")
                 .incrementer(new RunIdIncrementer())
-                .listener(listener)
                 .start(movieRatingStep1)
                 .build();
     }
@@ -73,6 +69,7 @@ public class MovieRatingConfiguration {
     }
 
     @Bean
+    @StepScope
     public FlatFileItemReader<MovieRating> reader() {
         return new FlatFileItemReaderBuilder<MovieRating>()
                 .name("ratingItemReader")
