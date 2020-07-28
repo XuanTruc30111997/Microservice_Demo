@@ -24,11 +24,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.web.client.RestTemplate;
 import truc.microservice.movie_service.batchProcessor.MovieRatingProcessor;
 import truc.microservice.movie_service.batchReader.RESTMovieReader;
 import truc.microservice.movie_service.batchWriter.MovieWriter;
 import truc.microservice.movie_service.batchWriter.RESTMovieWriter;
+import truc.microservice.movie_service.mapper.MovieRatingFileMapper;
 import truc.microservice.movie_service.model.Movie;
 import truc.microservice.movie_service.model.MovieInsert;
 import truc.microservice.movie_service.model.MovieRating;
@@ -36,7 +38,6 @@ import truc.microservice.movie_service.model.MovieRating;
 import javax.sql.DataSource;
 
 @Configuration
-@EnableBatchProcessing
 public class MovieRatingConfiguration {
 
     @Autowired
@@ -72,15 +73,23 @@ public class MovieRatingConfiguration {
 
     @Bean
     @StepScope
+    Resource inputFileResource()
+    {
+        return new ClassPathResource("sample-data.csv");
+    }
+
+    @Bean
+    @StepScope
     public FlatFileItemReader<MovieRating> reader() {
         return new FlatFileItemReaderBuilder<MovieRating>()
                 .name("ratingItemReader")
-                .resource(new ClassPathResource("sample-data.csv"))
+                .resource(inputFileResource())
                 .delimited()
                 .names(new String[]{"idMovie", "name", "star"})
-                .fieldSetMapper(new BeanWrapperFieldSetMapper<MovieRating>() {{
-                    setTargetType(MovieRating.class);
-                }})
+//                .fieldSetMapper(new BeanWrapperFieldSetMapper<MovieRating>() {{
+//                    setTargetType(MovieRating.class);
+//                }})
+                .fieldSetMapper(new MovieRatingFileMapper())
                 .build();
     }
 

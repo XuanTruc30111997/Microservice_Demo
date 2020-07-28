@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import truc.microservice.movie_service.model.MovieRating;
+import truc.microservice.movie_service.runner.JobRunner;
 import truc.microservice.movie_service.service.movieRating.MovieRatingService;
 
 @RestController
@@ -36,6 +37,9 @@ public class MovieRatingController {
     @Autowired
     Job movieJob;
 
+    @Autowired
+    JobRunner jobRunner;
+
     @GetMapping("/{id}")
     public ResponseEntity<MovieRating> getByMovieId(@PathVariable("id") Integer id)
     {
@@ -43,19 +47,22 @@ public class MovieRatingController {
     }
 
     @GetMapping()
-    public ResponseEntity<MovieRating> ahihi()
+    public String ahihi()
     {
-        try {
-            jobLauncher.run(movieJob, new JobParameters());
-        } catch (JobExecutionAlreadyRunningException e) {
-            LOGGER.error(e.getMessage(), e);
-        } catch (JobRestartException e) {
-            LOGGER.error(e.getMessage(), e);
-        } catch (JobInstanceAlreadyCompleteException e) {
-            LOGGER.error(e.getMessage(), e);
-        } catch (JobParametersInvalidException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
+//        try {
+//            jobLauncher.run(movieJob, new JobParameters());
+//        } catch (JobExecutionAlreadyRunningException e) {
+//            LOGGER.error(e.getMessage(), e);
+//        } catch (JobRestartException e) {
+//            LOGGER.error(e.getMessage(), e);
+//        } catch (JobInstanceAlreadyCompleteException e) {
+//            LOGGER.error(e.getMessage(), e);
+//        } catch (JobParametersInvalidException e) {
+//            LOGGER.error(e.getMessage(), e);
+//        }
+//        return new ResponseEntity<>(HttpStatus.OK);
+
+        jobRunner.runBatchJob();
+        return String.format("Run batch job completed");
     }
 }
