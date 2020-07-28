@@ -7,6 +7,7 @@ import truc.microservice.movie_service.model.Movie;
 import truc.microservice.movie_service.model.MovieInsert;
 import truc.microservice.movie_service.repository.MovieRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,5 +32,10 @@ public class MovieServiceImp implements MovieService {
         Movie movie = new Movie(movieInsert.getName());
 
         return movieRepository.save(movie);
+    }
+
+    @Override
+    public void insertAll(List<Movie> movies) {
+        movieRepository.saveAll(movies);
     }
 }
