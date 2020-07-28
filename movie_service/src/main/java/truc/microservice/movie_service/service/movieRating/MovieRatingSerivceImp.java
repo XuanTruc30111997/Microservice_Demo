@@ -25,4 +25,9 @@ public class MovieRatingSerivceImp implements MovieRatingService {
         // Map to MovieRating
         return new MovieRating(movie.getId(), movie.getName(), ratingCount.getAvgStar(), ratingCount.getCount());
     }
+
+    @Override
+    public RatingCount getMovieRatingCountByIdMovie(Integer id) {
+        return restTemplate.getForObject("http://rating-service/api/rating/avgStarByMovieId/" + id, RatingCount.class);
+    }
 }

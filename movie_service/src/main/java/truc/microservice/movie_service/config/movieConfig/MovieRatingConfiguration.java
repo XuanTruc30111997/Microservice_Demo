@@ -27,13 +27,15 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.web.client.RestTemplate;
 import truc.microservice.movie_service.batchProcessor.MovieRatingProcessor;
 import truc.microservice.movie_service.batchReader.RESTMovieReader;
+import truc.microservice.movie_service.batchWriter.MovieWriter;
 import truc.microservice.movie_service.batchWriter.RESTMovieWriter;
+import truc.microservice.movie_service.model.Movie;
+import truc.microservice.movie_service.model.MovieInsert;
 import truc.microservice.movie_service.model.MovieRating;
 
 import javax.sql.DataSource;
 
 @Configuration
-@EnableTask
 @EnableBatchProcessing
 public class MovieRatingConfiguration {
 
@@ -47,7 +49,7 @@ public class MovieRatingConfiguration {
     JobCompletionNotificationListener listener;
 
     @Bean
-    public Job movieJob(Step movieRatingStep1, JobCompletionNotificationListener listener)
+    public Job movieJob(Step movieRatingStep1)
     {
 
         return jobBuilderFactory.get("movieJob")
@@ -57,13 +59,13 @@ public class MovieRatingConfiguration {
     }
 
     @Bean
-    public Step movieRatingStep1(JdbcBatchItemWriter<MovieRating> movieRatingItemWriter)
+    public Step movieRatingStep1()
     {
         return stepBuilderFactory.get("movieRatingStep1")
-                .<MovieRating, MovieRating>chunk(1)
+                .<MovieRating, Movie>chunk(1)
                 .reader(reader())
                 .processor(movieRatingItemProcessor())
-                .writer(movieRatingItemWriter)
+                .writer(movieWriter())
                 .build();
 
     }
@@ -82,7 +84,7 @@ public class MovieRatingConfiguration {
                 .build();
     }
 
-    @Bean
+   /* @Bean
     public JdbcBatchItemWriter<MovieRating> movieRatingItemWriter(DataSource dataSource)
     {
         return new JdbcBatchItemWriterBuilder<MovieRating>()
@@ -90,10 +92,15 @@ public class MovieRatingConfiguration {
                 .sql("INSERT INTO movie (id, name, avgStar) VALUES (:idMovie, :name, :star)")
                 .dataSource(dataSource)
                 .build();
+    }*/
+
+    @Bean
+    ItemWriter<Movie> movieWriter(){
+        return new MovieWriter();
     }
 
     @Bean
-    ItemProcessor<MovieRating, MovieRating> movieRatingItemProcessor() {
+    ItemProcessor<MovieRating, Movie> movieRatingItemProcessor() {
         return new MovieRatingProcessor();
     }
 

@@ -30,7 +30,7 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
                     (rs, row) -> new Movie(
                             rs.getInt(0),
                             rs.getString(1),
-                            rs.getByte(2))
+                            rs.getDouble(2))
             ).forEach(movie -> log.info("Found <" + movie + "> in the database."));
         }
     }
