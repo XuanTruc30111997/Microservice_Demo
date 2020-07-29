@@ -8,6 +8,7 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
@@ -15,6 +16,8 @@ import org.springframework.batch.item.json.JacksonJsonObjectReader;
 import org.springframework.batch.item.json.JsonItemReader;
 import org.springframework.batch.item.json.builder.JsonItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ByteArrayResource;
@@ -53,11 +56,11 @@ public class MovieRatingConfiguration {
     }
 
     @Bean
-    public Step movieRatingStep1()
+    public Step movieRatingStep1(ItemReader<MovieRating> jsonItemReader)
     {
         return stepBuilderFactory.get("movieRatingStep1")
                 .<MovieRating, Movie>chunk(1)
-                .reader(jsonItemReader())
+                .reader(jsonItemReader)
                 .processor(movieRatingItemProcessor())
                 .writer(movieWriter())
                 .build();
@@ -71,25 +74,15 @@ public class MovieRatingConfiguration {
         return new ClassPathResource("sample-data.csv");
     }
 
-/*    @Bean
-    @StepScope
-    public FlatFileItemReader<MovieRating> reader() {
-        return new FlatFileItemReaderBuilder<MovieRating>()
-                .name("ratingItemReader")
-//                .resource(inputFileResource())
-                .resource(restTemplate.getForObject("http://aws-service/amazonS3/test-ahihi/movie.json", ByteArrayResource.class))
-                .delimited()
-                .names(new String[]{"idMovie", "name", "star"})
-//                .fieldSetMapper(new BeanWrapperFieldSetMapper<MovieRating>() {{
-//                    setTargetType(MovieRating.class);
-//                }})
-                .fieldSetMapper(new MovieRatingFieldMapper())
-                .build();
-    }*/
+    private Resource inputFile(String bucketName, String fileName)
+    {
+        return restTemplate.getForObject("http://aws-service/amazonS3/" + bucketName + "/" + fileName, ByteArrayResource.class);
+    }
 
     @Bean
     @StepScope
-    public JsonItemReader<MovieRating> jsonItemReader()
+    public JsonItemReader<MovieRating> jsonItemReader(@Value("#{jobParameters[bucketName]}") String bucketName
+            , @Value("#{jobParameters[fileName]}") String fileName)
     {
         ObjectMapper objectMapper = new ObjectMapper();
         // configure the objectMapper as required
@@ -99,7 +92,7 @@ public class MovieRatingConfiguration {
 
         return new JsonItemReaderBuilder<MovieRating>()
                 .jsonObjectReader(jsonObjectReader)
-                .resource(restTemplate.getForObject("http://aws-service/amazonS3/test-ahihi/movie.json", ByteArrayResource.class))
+                .resource(inputFile(bucketName, fileName))
                 .name("tradeJsonItemReader")
                 .build();
     }

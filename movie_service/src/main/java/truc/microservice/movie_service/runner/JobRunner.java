@@ -17,37 +17,37 @@ import java.util.Date;
 public class JobRunner {
     private static final Logger logger = LoggerFactory.getLogger(JobRunner.class);
 
-
     private JobLauncher simpleJobLauncher;
-    private Job demo1;
+    private Job movieJob;
 
     @Autowired
-    public JobRunner(Job demo1, JobLauncher jobLauncher) {
+    public JobRunner(JobLauncher jobLauncher, Job movieJob)
+    {
         this.simpleJobLauncher = jobLauncher;
-        this.demo1 = demo1;
+        this.movieJob = movieJob;
     }
-
 
     @Async
-    public void runBatchJob() {
+    public void runMovieBatchJob(String bucketName, String fileName) {
         JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
-        jobParametersBuilder.addString("file name", "employees.csv");
+        jobParametersBuilder.addString("fileName", fileName);
+        jobParametersBuilder.addString("bucketName", bucketName);
         jobParametersBuilder.addDate("date", new Date(), true);
-        runJob(demo1, jobParametersBuilder.toJobParameters());
+        runJob(movieJob, jobParametersBuilder.toJobParameters());
     }
 
 
-    public void runJob(Job job, JobParameters parameters) {
+    private void runJob(Job job, JobParameters parameters) {
         try {
             JobExecution jobExecution = simpleJobLauncher.run(job, parameters);
         } catch (JobExecutionAlreadyRunningException e) {
-            logger.info("Job with fileName={} is already running.", parameters.getParameters().get("file name"));
+            logger.info("Job with fileName={} is already running.", parameters.getParameters().get("fileName"));
         } catch (JobRestartException e) {
-            logger.info("Job with fileName={} was not restarted.", parameters.getParameters().get("file name"));
+            logger.info("Job with fileName={} was not restarted.", parameters.getParameters().get("fileName"));
         } catch (JobInstanceAlreadyCompleteException e) {
-            logger.info("Job with fileName={} already completed.", parameters.getParameters().get("file name"));
+            logger.info("Job with fileName={} already completed.", parameters.getParameters().get("fileName"));
         } catch (JobParametersInvalidException e) {
-            logger.info("Invalid job parameters.", parameters.getParameters().get("file name"));
+            logger.info("Invalid job parameters.", parameters.getParameters().get("fileName"));
         }
     }
 }
