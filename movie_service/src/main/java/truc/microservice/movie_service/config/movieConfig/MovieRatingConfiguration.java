@@ -3,6 +3,7 @@ package truc.microservice.movie_service.config.movieConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -31,6 +32,7 @@ import truc.microservice.movie_service.model.Movie;
 import truc.microservice.movie_service.model.MovieRating;
 
 @Configuration
+@EnableBatchProcessing
 public class MovieRatingConfiguration {
 
     @Autowired
@@ -38,9 +40,6 @@ public class MovieRatingConfiguration {
 
     @Autowired
     public StepBuilderFactory stepBuilderFactory;
-
-    @Autowired
-    JobCompletionNotificationListener listener;
 
     @Autowired
     RestTemplate restTemplate;
