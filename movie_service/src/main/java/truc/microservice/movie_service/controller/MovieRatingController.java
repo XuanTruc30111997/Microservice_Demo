@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import truc.microservice.movie_service.model.MovieRating;
 import truc.microservice.movie_service.runner.JobRunner;
 import truc.microservice.movie_service.service.movieRating.MovieRatingService;
@@ -31,13 +28,6 @@ public class MovieRatingController {
     MovieRatingService movieRatingService;
 
     @Autowired
-    JobLauncher jobLauncher;
-
-    @Qualifier("movieJob")
-    @Autowired
-    Job movieJob;
-
-    @Autowired
     JobRunner jobRunner;
 
     @GetMapping("/{id}")
@@ -47,7 +37,7 @@ public class MovieRatingController {
     }
 
     @GetMapping()
-    public String ahihi()
+    public String ahihi(@RequestParam("bucketName") String bucketName, @RequestParam("fileName") String fileName)
     {
 //        try {
 //            jobLauncher.run(movieJob, new JobParameters());
@@ -62,7 +52,7 @@ public class MovieRatingController {
 //        }
 //        return new ResponseEntity<>(HttpStatus.OK);
 
-        jobRunner.runBatchJob();
+        jobRunner.runMovieBatchJob(bucketName, fileName);
         return String.format("Run batch job completed");
     }
 }
