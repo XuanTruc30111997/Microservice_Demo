@@ -37,22 +37,13 @@ public class MovieRatingController {
     }
 
     @GetMapping()
-    public String ahihi(@RequestParam("bucketName") String bucketName, @RequestParam("fileName") String fileName)
+    public String performBatch(@RequestParam("bucketName") String bucketName, @RequestParam("fileName") String fileName)
     {
-//        try {
-//            jobLauncher.run(movieJob, new JobParameters());
-//        } catch (JobExecutionAlreadyRunningException e) {
-//            LOGGER.error(e.getMessage(), e);
-//        } catch (JobRestartException e) {
-//            LOGGER.error(e.getMessage(), e);
-//        } catch (JobInstanceAlreadyCompleteException e) {
-//            LOGGER.error(e.getMessage(), e);
-//        } catch (JobParametersInvalidException e) {
-//            LOGGER.error(e.getMessage(), e);
-//        }
-//        return new ResponseEntity<>(HttpStatus.OK);
+        LOGGER.info(">>>> Start to perform batch <<<<<<");
 
         jobRunner.runMovieBatchJob(bucketName, fileName);
+
+        LOGGER.info(">>>> Perform batch completed <<<<<<");
         return String.format("Run batch job completed");
     }
 }
