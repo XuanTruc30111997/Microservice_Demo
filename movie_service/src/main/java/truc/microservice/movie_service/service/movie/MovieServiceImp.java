@@ -29,6 +29,11 @@ public class MovieServiceImp implements MovieService {
 
     @Override
     public Movie insertMovie(MovieInsert movieInsert) {
+        if(movieInsert == null)
+        {
+            throw new IllegalArgumentException("Movie Insert cannot be null");
+        }
+
         Movie movie = new Movie(movieInsert.getName());
 
         return movieRepository.save(movie);
@@ -36,6 +41,11 @@ public class MovieServiceImp implements MovieService {
 
     @Override
     public void insertAll(List<Movie> movies) {
+        if(movies == null)
+        {
+            throw new IllegalArgumentException("Movies cannot be null");
+        }
+
         movieRepository.saveAll(movies);
     }
 }
