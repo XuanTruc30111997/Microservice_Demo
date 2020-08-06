@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.*;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.json.JsonItemReader;
 import org.springframework.batch.test.JobLauncherTestUtils;

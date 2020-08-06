@@ -7,9 +7,7 @@ import truc.microservice.catalog_service.model.Catalog;
 import truc.microservice.catalog_service.model.MovieRating;
 import truc.microservice.catalog_service.service.catalog.CatalogService;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class CatalogMovieDetailServiceImp implements CatalogMovieDetailSerivce {
@@ -33,6 +31,7 @@ public class CatalogMovieDetailServiceImp implements CatalogMovieDetailSerivce {
 //            MovieRating movieRating = restTemplate.getForObject("http://movie_serivce:8087/api/movie_rating/" + catalogDetail.getMovieId(), MovieRating.class);
             MovieRating movieRating = restTemplate.getForObject("http://movie-service/api/movie_rating/" + catalogDetail.getMovieId(), MovieRating.class);
             movieRatings.add(movieRating);
+            movieRatings.sort(Comparator.comparing(MovieRating::getIdMovie));
         }
 
         return movieRatings;

@@ -17,6 +17,9 @@
 	<properties>
 		<java.version>11</java.version>
 		<spring-cloud.version>Greenwich.RELEASE</spring-cloud.version>
+		<serenity-bdd.version>2.0.17</serenity-bdd.version>
+		<serenity-bdd.maven.plugins>2.0.17</serenity-bdd.maven.plugins>
+		<serenity-bdd.serenity-cucumber.version>1.9.20</serenity-bdd.serenity-cucumber.version>
 	</properties>
 
 	<dependencies>
@@ -31,6 +34,24 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>net.serenity-bdd</groupId>
+			<artifactId>serenity-spring</artifactId>
+			<version>${serenity-bdd.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.serenity-bdd</groupId>
+			<artifactId>serenity-cucumber</artifactId>
+			<version>${serenity-bdd.serenity-cucumber.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -60,7 +81,11 @@
 			<artifactId>spring-cloud-commons</artifactId>
 			<version>2.2.3.RELEASE</version>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+        </dependency>
+    </dependencies>
 
 	<dependencyManagement>
 		<dependencies>
