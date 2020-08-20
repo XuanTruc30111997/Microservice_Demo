@@ -9,6 +9,7 @@ import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteExcep
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -49,5 +50,14 @@ public class JobRunner {
         } catch (JobParametersInvalidException e) {
             logger.info("Invalid job parameters.", parameters.getParameters().get("fileName"));
         }
+    }
+
+//    @Scheduled(cron = "0 * * * * *")
+    public void schedule() {
+        JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
+        jobParametersBuilder.addString("fileName", "movie.json");
+        jobParametersBuilder.addString("bucketName", "test-ahihi");
+        jobParametersBuilder.addDate("date", new Date(), true);
+        runJob(movieJob, jobParametersBuilder.toJobParameters());
     }
 }

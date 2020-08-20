@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aws-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: theater
+  template:
+    metadata:
+      labels:
+        app: theater
+    spec:
+      containers:
+        - name: aws-service
+          image: trucnguyen301197/aws-service:latest
+          ports:
+            - containerPort: 8085
+          imagePullPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aws-service
+spec:
+  selector:
+    app: theater
+  ports:
+    - port: 8085
+      targetPort: 8085
+  type: LoadBalancer

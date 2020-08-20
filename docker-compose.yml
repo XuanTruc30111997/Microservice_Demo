@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3'
 
 networks:
   truc:
@@ -17,48 +17,65 @@ services:
     networks:
       - truc
 
-  #service2: definition of phpmyadmin
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
-    container_name: my-php-myadmin
+  #service1: definition of mySQl database
+  aws-service:
+    image: aws-service
+    container_name: aws-service
+    build:
+      context: ./test-aws
+      dockerfile: DockerFile
     ports:
-      - "8082:80"
+      - "8085:8085"
     restart: always
 
-    depends_on:
-      - theater_db
+#    links:
+#      - discovery
+
     networks:
       - truc
 
-    environment:
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: TrucNguyen123
-
-  #service3: definition of discovery server
-  discovery:
-    image: discovery
-    container_name: theater-discovery
-    build:
-      context: ./discovery
-      dockerfile: DockerFile
-    ports:
-      - 8761:8761
+#  #service2: definition of phpmyadmin
+#  phpmyadmin:
+#    image: phpmyadmin/phpmyadmin:latest
+#    container_name: my-php-myadmin
+#    ports:
+#      - "8082:80"
+#    restart: always
+#
+#    depends_on:
+#      - theater_db
+#    networks:
+#      - truc
+#
+#    environment:
+#      SPRING_DATASOURCE_USERNAME: root
+#      SPRING_DATASOURCE_PASSWORD: TrucNguyen123
+#
+#  #service3: definition of discovery server
+#  discovery:
+#    image: discovery
+#    container_name: theater-discovery
+#    build:
+#      context: ./discovery
+#      dockerfile: DockerFile
+#    ports:
+#      - 8761:8761
 
   #service4: definition of config
-  config:
-    image: config
-    container_name: theater-config
-    build:
-      context: ./config
-      dockerfile: DockerFile
-    environment:
-      - JAVA_OPTS=
-        -DEUREKA_SERVER=http://theater-discovery:8761/eureka
-        -Dspring.cloud.config.server.native.searchLocations=/var/config-data
-    depends_on:
-      - discovery
-    ports:
-      - 8888:8888
+#  config:
+#    image: config
+#    container_name: theater-config
+#    build:
+#      context: ./config
+#      dockerfile: DockerFile
+#    environment:
+#      - JAVA_OPTS=
+#        -DEUREKA_SERVER=http://theater-discovery:8761/eureka
+#        -Dspring.cloud.config.server.native.searchLocations=/var/config-data
+#    depends_on:
+#      - discovery
+#    ports:
+#      - 8888:8888
 
   #service5: definition of rating-service
   rating_service:
@@ -73,21 +90,23 @@ services:
 
     depends_on:
       - theater_db
-      - discovery
-      - config
+#      - discovery
+#      - config
+      - aws-service
     networks:
       - truc
 
-    links:
-      - discovery
+#    links:
+#      - discovery
 
     environment:
+#      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/rating?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_URL: jdbc:mysql://theater-db:3306/rating?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: TrucNguyen123
-      eureka.client.enabled: 'true'
-      eureka.host: discovery
-      eureka.instance.preferIpAddress: 'true'
+#      eureka.client.enabled: 'true'
+#      eureka.host: discovery
+#      eureka.instance.preferIpAddress: 'true'
       SPRING_PROFILES_ACTIVE: docker
 
   #service6: definition of movie-service
@@ -103,12 +122,13 @@ services:
 
     depends_on:
       - theater_db
-      - discovery
-      - config
+#      - discovery
+#      - config
+      - aws-service
 
     links:
       - rating_service:rating_service
-      - discovery
+#      - discovery
 
     networks:
       - truc
@@ -117,9 +137,9 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://theater-db:3306/movie?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: TrucNguyen123
-      eureka.client.enabled: 'true'
-      eureka.host: discovery
-      eureka.instance.preferIpAddress: 'true'
+#      eureka.client.enabled: 'true'
+#      eureka.host: discovery
+#      eureka.instance.preferIpAddress: 'true'
       SPRING_PROFILES_ACTIVE: docker
 
   #service7: definition of catalog-service
@@ -135,20 +155,21 @@ services:
 
     depends_on:
       - theater_db
-      - discovery
-      - config
+#      - discovery
+#      - config
+      - aws-service
 
     networks:
       - truc
-
-    links:
-      - discovery
+#
+#    links:
+#      - discovery
 
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://theater-db:3306/catalog?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: TrucNguyen123
-      eureka.client.enabled: 'true'
-      eureka.host: discovery
-      eureka.instance.preferIpAddress: 'true'
+#      eureka.client.enabled: 'true'
+#      eureka.host: discovery
+#      eureka.instance.preferIpAddress: 'true'
       SPRING_PROFILES_ACTIVE: docker

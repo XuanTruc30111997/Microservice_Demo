@@ -1,6 +1,6 @@
 package truc.microservice.movie_service.batchWriter;
 
-import com.netflix.discovery.converters.Auto;
+//import com.netflix.discovery.converters.Auto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemWriter;
@@ -16,8 +16,8 @@ public class RESTMovieWriter implements ItemWriter<MovieRating> {
 
     private Logger LOGGER = LoggerFactory.getLogger(RESTMovieReader.class);
 
-    @Auto
-    NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+//    @Auto
+//    NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
     public void write(List<? extends MovieRating> list) throws Exception {
