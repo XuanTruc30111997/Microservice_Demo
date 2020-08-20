@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: theater
+  template:
+    metadata:
+      labels:
+        app: theater
+    spec:
+      containers:
+        - name: catalog-service
+          image: trucnguyen301197/catalog-service:latest
+          ports:
+            - containerPort: 8088
+          env:
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: TrucNguyen123
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://theater-db:3306/catalog?createDatabaseIfNotExist=true
+            - name: SPRING_DATASOURCE_USERNAME
+              value: root
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
+          imagePullPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalog-service
+spec:
+  selector:
+    app: theater
+  ports:
+    - port: 8088
+      targetPort: 8088
+      nodePort: 31200
+  type: NodePort

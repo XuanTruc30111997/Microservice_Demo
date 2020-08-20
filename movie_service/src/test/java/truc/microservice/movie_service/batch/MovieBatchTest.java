@@ -1,6 +1,6 @@
 package truc.microservice.movie_service.batch;
 
-import com.netflix.discovery.converters.Auto;
+//import com.netflix.discovery.converters.Auto;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -47,7 +47,7 @@ import truc.microservice.movie_service.service.movieRating.MovieRatingService;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import javax.ws.rs.core.Context;
+//import javax.ws.rs.core.Context;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;

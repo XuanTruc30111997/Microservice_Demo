@@ -24,6 +24,12 @@ public class RatingController {
     @Autowired
     RatingCountService ratingCountService;
 
+    @GetMapping("/ahihi")
+    public ResponseEntity<String> ahihi()
+    {
+        return new ResponseEntity<>("From docker ahihi", HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Rating> getRatingById(@PathVariable("id") Integer id)
     {

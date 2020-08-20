@@ -75,7 +75,11 @@ public class MovieRatingConfiguration {
 
     private Resource inputFile(String bucketName, String fileName)
     {
-        return restTemplate.getForObject("http://aws-service/amazonS3/" + bucketName + "/" + fileName, ByteArrayResource.class);
+        // For Eureka
+//        return restTemplate.getForObject("http://aws-service/amazonS3/" + bucketName + "/" + fileName, ByteArrayResource.class);
+
+        // For Kubernetes
+        return restTemplate.getForObject("http://aws-service:8085/amazonS3/" + bucketName + "/" + fileName, ByteArrayResource.class);
     }
 
     @Bean

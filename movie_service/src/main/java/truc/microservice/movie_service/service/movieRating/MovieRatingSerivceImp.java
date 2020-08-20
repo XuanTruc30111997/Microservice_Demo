@@ -20,7 +20,12 @@ public class MovieRatingSerivceImp implements MovieRatingService {
         // get Movie
         Movie movie = movieService.findById(id);
 
-        RatingCount ratingCount = restTemplate.getForObject("http://rating-service/api/rating/avgStarByMovieId/" + id, RatingCount.class);
+        // With Eureka and discovery
+//        RatingCount ratingCount = restTemplate.getForObject("http://rating-service/api/rating/avgStarByMovieId/" + id, RatingCount.class);
+
+        // For kubernetes
+//        RatingCount ratingCount = restTemplate.getForObject("http://localhost:8086/api/rating/avgStarByMovieId/" + id, RatingCount.class);
+        RatingCount ratingCount = restTemplate.getForObject("http://rating-service:8086/api/rating/avgStarByMovieId/" + id, RatingCount.class);
 
         // Map to MovieRating
         return new MovieRating(movie.getId(), movie.getName(), ratingCount.getAvgStar(), ratingCount.getCount());
@@ -28,6 +33,11 @@ public class MovieRatingSerivceImp implements MovieRatingService {
 
     @Override
     public RatingCount getMovieRatingCountByIdMovie(Integer id) {
-        return restTemplate.getForObject("http://rating-service/api/rating/avgStarByMovieId/" + id, RatingCount.class);
+        // With Eureka and discovery
+//        return restTemplate.getForObject("http://rating-service/api/rating/avgStarByMovieId/" + id, RatingCount.class);
+
+        // For kubernetes
+//        return restTemplate.getForObject("http://localhost:8086/api/rating/avgStarByMovieId/" + id, RatingCount.class);
+        return restTemplate.getForObject("http://rating-service:8086/api/rating/avgStarByMovieId/" + id, RatingCount.class);
     }
 }

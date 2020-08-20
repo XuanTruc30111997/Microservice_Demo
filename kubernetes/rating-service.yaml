@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: rating-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: theater
+  template:
+    metadata:
+      labels:
+        app: theater
+    spec:
+      containers:
+        - name: rating-service
+          image: trucnguyen301197/rating-service:latest
+          ports:
+            - containerPort: 8086
+          env:
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: TrucNguyen123
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://theater-db:3306/rating?createDatabaseIfNotExist=true
+            - name: SPRING_DATASOURCE_USERNAME
+              value: root
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
+          imagePullPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rating-service
+spec:
+  selector:
+    app: theater
+  ports:
+    - port: 8086
+      targetPort: 8086
+  type: LoadBalancer

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: movie-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: theater
+  template:
+    metadata:
+      labels:
+        app: theater
+    spec:
+      containers:
+        - name: movie-service
+          image: trucnguyen301197/movie-service:latest
+          ports:
+            - containerPort: 8087
+          env:
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: TrucNguyen123
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://theater-db:3306/movie?createDatabaseIfNotExist=true
+            - name: SPRING_DATASOURCE_USERNAME
+              value: root
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
+          imagePullPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: movie-service
+spec:
+  selector:
+    app: theater
+  ports:
+    - port: 8087
+      targetPort: 8087
+  type: LoadBalancer

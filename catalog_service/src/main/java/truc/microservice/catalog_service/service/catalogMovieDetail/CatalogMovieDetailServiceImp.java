@@ -28,8 +28,12 @@ public class CatalogMovieDetailServiceImp implements CatalogMovieDetailSerivce {
         // set MovieRatings
         for(var catalogDetail : catalog.getCatalogDetails())
         {
-//            MovieRating movieRating = restTemplate.getForObject("http://movie_serivce:8087/api/movie_rating/" + catalogDetail.getMovieId(), MovieRating.class);
-            MovieRating movieRating = restTemplate.getForObject("http://movie-service/api/movie_rating/" + catalogDetail.getMovieId(), MovieRating.class);
+            // Fore Eureka and Discovery
+//            MovieRating movieRating = restTemplate.getForObject("http://movie-service/api/movie_rating/" + catalogDetail.getMovieId(), MovieRating.class);
+
+            // Fore Kubernetes
+            MovieRating movieRating = restTemplate.getForObject("http://movie-service:8087/api/movie_rating/" + catalogDetail.getMovieId(), MovieRating.class);
+
             movieRatings.add(movieRating);
             movieRatings.sort(Comparator.comparing(MovieRating::getIdMovie));
         }
